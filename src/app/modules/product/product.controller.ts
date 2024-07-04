@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import { ProductServices } from './product.service';
 import {
@@ -83,9 +84,29 @@ const updateProduct = async (
   }
 };
 
+const deleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { productId } = req.params;
+    const result = await ProductServices.deleteProductFromDB(productId);
+    res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully!',
+      data: null,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 export const ProductControllers = {
   createProduct,
   getAllProducts,
   getSingleProduct,
   updateProduct,
+  deleteProduct,
 };

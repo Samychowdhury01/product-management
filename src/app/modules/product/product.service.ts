@@ -22,8 +22,8 @@ const getSingleProductFromDB = async (id: string) => {
   const isExists = await Product.isProductExists(id);
   if (!isExists) {
     throw { code: 404, description: 'User not found!' };
-  } 
-  return isExists
+  }
+  return isExists;
 };
 
 // get a single product using ID from DB
@@ -43,9 +43,25 @@ const updateProductData = async (id: string, payload: Partial<TProduct>) => {
   }
 };
 
+// delete a single product using ID from DB
+const deleteProductFromDB = async (id: string) => {
+  const isExists = await Product.isProductExists(id);
+  if (isExists) {
+    const result = await Product.findByIdAndUpdate(
+      { _id: id },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+    return result;
+  } else {
+    throw { code: 404, description: 'User not found!' };
+  }
+};
+
 export const ProductServices = {
   createProductIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,
   updateProductData,
+  deleteProductFromDB,
 };
