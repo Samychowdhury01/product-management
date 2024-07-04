@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { ProductServices } from './product.service';
-import { productValidationSchema } from './product.validation';
+import {
+  productValidationSchema,
+  updateProductValidationSchema,
+} from './product.validation';
 
 const createProduct = async (
   req: Request,
@@ -44,8 +47,32 @@ const getSingleProduct = async (
   next: NextFunction,
 ) => {
   try {
-    const {productId} = req.params;
+    const { productId } = req.params;
     const result = await ProductServices.getSingleProductFromDB(productId);
+    res.status(200).json({
+      success: true,
+      message: 'Product fetched successfully!',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// update product controller
+const updateProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { productId } = req.params;
+    const productData = req.body;
+    const validatedData = updateProductValidationSchema.parse(productData);
+    const result = await ProductServices.updateProductData(
+      productId,
+      validatedData,
+    );
     res.status(200).json({
       success: true,
       message: 'Product fetched successfully!',
@@ -59,5 +86,6 @@ const getSingleProduct = async (
 export const ProductControllers = {
   createProduct,
   getAllProducts,
-  getSingleProduct
+  getSingleProduct,
+  updateProduct,
 };
