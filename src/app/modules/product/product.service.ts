@@ -13,7 +13,7 @@ const createProductIntoDB = async (product: TProduct) => {
 
 // get all product from DB
 const getAllProductsFromDB = async () => {
-  const result = await Product.find();
+  const result = await Product.find().select('-isDeleted');
   return result;
 };
 
@@ -35,7 +35,7 @@ const updateProductData = async (id: string, payload: Partial<TProduct>) => {
       {
         $set: payload,
       },
-      { new: true, fields : { _id : 0, isDeleted : 0}},
+      { new: true, fields: { _id: 0, isDeleted: 0 } },
     );
     return result;
   } else {
@@ -65,7 +65,7 @@ const getSearchedProductsFromDB = async (searchTerm: string) => {
       { description: { $regex: searchTerm, $options: 'i' } },
     ],
     isDeleted: { $ne: true },
-  });
+  }).select('-isDeleted');
   if (result.length === 0) {
     throw {
       code: 404,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {  Request, Response } from 'express';
 import orderValidationSchema from './order.validation';
 import { OrderServices } from './order.service';
@@ -13,7 +14,7 @@ const createOrder = async (req: Request, res: Response) => {
       message: 'Order created successfully!',
       data: result,
     });
-  } catch (error) {
+  } catch (error : any) {
     res.status(404).json({
       success: false,
       message: error.message || 'Insufficient quantity available in inventory',
@@ -42,7 +43,7 @@ const getAllOrders = async (req: Request, res: Response) => {
         data: result,
       });
     }
-  } catch (error) {
+  } catch (error : any) {
     res.status(404).json({
       success: false,
       message: error.message || 'Orders not found!',

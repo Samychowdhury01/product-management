@@ -61,6 +61,12 @@ const productSchema = new Schema<TProduct, TProductModel>({
   },
 });
 
+// pre hook for find operation
+productSchema.pre('find', function (next) {
+  this.find({ isDeleted: {$ne: true} });
+  next();
+  });
+
 // statics method to find out provided id product exists or not
 productSchema.statics.isProductExists = async function (productId: string) {
   const result = await Product.findOne(
