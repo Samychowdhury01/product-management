@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TProduct } from './product.interface';
 import { Product } from './product.model';
 
 // create a new product
 const createProductIntoDB = async (product: TProduct) => {
-  const result = await Product.create(product);
-  return result;
+  const data = await Product.create(product);
+  // removing the isDeleted flag from response
+  const { isDeleted, ...restData } = data.toObject();
+  // sending the response without isDeleted property
+  return restData;
 };
 
 // get all product from DB
@@ -15,16 +19,19 @@ const getAllProductsFromDB = async () => {
 
 // get a single product using ID from DB
 const getSingleProductFromDB = async (id: string) => {
-  const result = await Product.findById(id);
-  return result;
+  const isExists = await Product.isProductExists(id);
+  if (!isExists) {
+    throw { code: 404, description: 'User not found!' };
+  } 
+  return isExists
 };
 
 // get a single product using ID from DB
 const updateProductData = async (id: string, payload: Partial<TProduct>) => {
-  const isExists = await Product.findById(id);
+  const isExists = await Product.isProductExists(id);
   if (isExists) {
     const result = await Product.findByIdAndUpdate(
-      {_id: id },
+      { _id: id },
       {
         $set: payload,
       },
@@ -32,7 +39,7 @@ const updateProductData = async (id: string, payload: Partial<TProduct>) => {
     );
     return result;
   } else {
-    throw { code: 404, description: 'User not found!' }
+    throw { code: 404, description: 'User not found!' };
   }
 };
 

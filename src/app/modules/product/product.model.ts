@@ -1,5 +1,10 @@
 import { Schema, model } from 'mongoose';
-import { TInventory, TProduct, TVariants } from './product.interface';
+import {
+  TInventory,
+  TProduct,
+  TProductModel,
+  TVariants,
+} from './product.interface';
 
 // variants schema
 const variantSchema = new Schema<TVariants>({
@@ -26,11 +31,11 @@ const inventorySchema = new Schema<TInventory>({
 });
 
 // 2. Create a Schema corresponding to the document interface.
-const productSchema = new Schema<TProduct>({
+const productSchema = new Schema<TProduct, TProductModel>({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   description: {
     type: String,
@@ -50,7 +55,20 @@ const productSchema = new Schema<TProduct>({
   },
   variants: [variantSchema],
   inventory: inventorySchema,
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
+// statics method to find out provided id product exists or not
+productSchema.statics.isProductExists = async function (productId: string) {
+  const result = await Product.findOne(
+    { _id: productId, isDeleted: { $ne: true } },
+    { _id: 0, isDeleted: 0 }
+  );
+  return result;
+};
+
 // 3. Create a Model.
-export const Product = model<TProduct>('Product', productSchema);
+export const Product = model<TProduct, TProductModel>('Product', productSchema);
