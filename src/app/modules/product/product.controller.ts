@@ -6,6 +6,7 @@ import {
   updateProductValidationSchema,
 } from './product.validation';
 
+// create product
 const createProduct = async (
   req: Request,
   res: Response,
@@ -24,18 +25,32 @@ const createProduct = async (
     next(error);
   }
 };
+
+// get products
 const getAllProducts = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const result = await ProductServices.getAllProductsFromDB();
-    res.status(200).json({
-      success: true,
-      message: 'Products fetched successfully!',
-      data: result,
-    });
+    const { searchTerm } = req.query;
+    if (searchTerm) {
+      const result = await ProductServices.getSearchedProductsFromDB(
+        searchTerm as string,
+      );
+      res.status(200).json({
+        success: true,
+        message: 'Search products retrieved successfully!',
+        data: result,
+      });
+    } else {
+      const result = await ProductServices.getAllProductsFromDB();
+      res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully!',
+        data: result,
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -97,11 +112,29 @@ const deleteProduct = async (
       message: 'Product deleted successfully!',
       data: null,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
+// const getSearchedProducts = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     const { searchTerm } = req.query;
+//     console.log(searchTerm);
+//     const result = await ProductServices.getSearchedProductsFromDB(searchTerm as string);
+//     res.status(200).json({
+//       success: true,
+//       message: 'Search products retrieved successfully!',
+//       data: result,
+//     });
+//   }
+//   catch (error) {
+//     next(error);
+//   }
+// };
 
 export const ProductControllers = {
   createProduct,
@@ -109,4 +142,5 @@ export const ProductControllers = {
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  // getSearchedProducts
 };
