@@ -6,7 +6,6 @@ const orderSchema = new Schema<TOrder>({
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   productId: {
     type: String,
