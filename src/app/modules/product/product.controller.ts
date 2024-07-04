@@ -91,7 +91,7 @@ const updateProduct = async (
     );
     res.status(200).json({
       success: true,
-      message: 'Product fetched successfully!',
+      message: "Product updated successfully!",
       data: result,
     });
   } catch (error) {
@@ -99,6 +99,7 @@ const updateProduct = async (
   }
 };
 
+// delete controller
 const deleteProduct = async (
   req: Request,
   res: Response,

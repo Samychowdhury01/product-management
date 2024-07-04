@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import {  Request, Response } from 'express';
 import orderValidationSchema from './order.validation';
 import { OrderServices } from './order.service';
 
 // create order
-const createOrder = async (req: Request, res: Response, next: NextFunction) => {
+const createOrder = async (req: Request, res: Response) => {
   try {
     const order = req.body;
     const validateOrder = await orderValidationSchema.parse(order);
@@ -22,11 +22,7 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // get orders
-const getAllOrders = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const getAllOrders = async (req: Request, res: Response) => {
   try {
     const { email } = req.query;
     if (email) {
@@ -47,7 +43,10 @@ const getAllOrders = async (
       });
     }
   } catch (error) {
-    next(error);
+    res.status(404).json({
+      success: false,
+      message: error.message || 'Orders not found!',
+    });
   }
 };
 

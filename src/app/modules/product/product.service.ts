@@ -35,7 +35,7 @@ const updateProductData = async (id: string, payload: Partial<TProduct>) => {
       {
         $set: payload,
       },
-      { new: true },
+      { new: true, fields : { _id : 0, isDeleted : 0}},
     );
     return result;
   } else {
@@ -58,16 +58,19 @@ const deleteProductFromDB = async (id: string) => {
   }
 };
 // delete a single product using ID from DB
-const getSearchedProductsFromDB = async (searchTerm : string) => {
+const getSearchedProductsFromDB = async (searchTerm: string) => {
   const result = await Product.find({
     $or: [
       { name: { $regex: searchTerm, $options: 'i' } },
       { description: { $regex: searchTerm, $options: 'i' } },
     ],
     isDeleted: { $ne: true },
-  }); 
-  if(result.length === 0){
-    throw { code: 404, description: 'Products not found with this search term!' };
+  });
+  if (result.length === 0) {
+    throw {
+      code: 404,
+      description: 'Products not found with this search term!',
+    };
   }
   return result;
 };

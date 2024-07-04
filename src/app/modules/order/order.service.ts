@@ -48,6 +48,9 @@ const getAllOrdersFromDB = async () => {
 // get a specific email's orders
 const getOrdersByEmailFromDB = async (email: string) => {
   const result = await Order.find({ email });
+  if(result.length === 0){
+    throw new Error( "Order not found")
+  }
   return result;
 }
 
